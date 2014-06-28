@@ -248,8 +248,6 @@
 
 	saveImage = () ->
 		index = imageMatcher.getBestRectangleCollectionIndex() + 1
-		console.log index
-		console.log document.getElementById("canvas#{index}")
 		dataURL = document.getElementById("canvas#{index}").toDataURL()
 		document.getElementById("snapshot").src = dataURL
 
