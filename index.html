@@ -54,15 +54,9 @@
 
 			@killWorst()
 			@killWorst()
-			@killWorst()
-			@killWorst()
 
 			@breedRandomTwo()
-			@breedRandomTwo()
 
-			@mutateOne()
-			@mutateOne()
-			@mutateOne()
 			@mutateOne()
 
 			#console.log "#{@iteration}:  #{bestScore}"
@@ -241,7 +235,7 @@
 	imageMatcher = null
 	go = () ->
 		imageURL = document.getElementById("imageurl").value
-		imageMatcher = new ImageMatcher imageURL, 30, 10
+		imageMatcher = new ImageMatcher imageURL, 30, 6
 		setTimeout (() -> start()), 1000
 
 	start = () -> setInterval (() -> imageMatcher.run()), 0
