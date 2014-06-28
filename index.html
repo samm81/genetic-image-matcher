@@ -2,10 +2,10 @@
 	<div id="canvases">
 		<canvas width="255", height="255", id="target"></canvas>
 	</div>
+	<span>URL of image to copy (must be 256 x 256): <input type="text" id="imageurl" /><button id="go">Go</button></span><br /> 
 	<span>Iteration Number:  </span><span id="iteration"></span><br />
 	<span>Best Score:  </span><span id="bestScore"></span><br />
-	<button id="save">Grab Best Snapshot</button>
-	<br />
+	<button id="save">Grab Best Snapshot</button><br />
 	<img id="snapshot" />
 </body>
 
@@ -237,11 +237,14 @@
 			parseInt(b.join(""), 2)
 		@random: (numbits) ->
 			((if Math.random() < .5 then 1 else 0) for i in [1..numbits])
-
-	imageMatcher = new ImageMatcher "https://dl.dropboxusercontent.com/u/2336352/img.png", 30, 10
+            
+	imageMatcher = null
+	go = () ->
+		imageURL = document.getElementById("imageurl").value
+		imageMatcher = new ImageMatcher imageURL, 30, 10
+		setTimeout (() -> start()), 1000
 
 	start = () -> setInterval (() -> imageMatcher.run()), 0
-	setTimeout (() -> start()), 1000
 
 	saveImage = () ->
 		index = imageMatcher.getBestRectangleCollectionIndex() + 1
@@ -251,6 +254,7 @@
 		document.getElementById("snapshot").src = dataURL
 
 	document.getElementById("save").onclick = (() -> saveImage())
+	document.getElementById("go").onclick = (() -> go())
 
 </script>
 
