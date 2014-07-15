@@ -2,7 +2,12 @@
 	<div id="canvases">
 		<canvas width="255", height="255", id="target"></canvas>
 	</div>
-	<span>URL of image to copy (must be 256 x 256): <input type="text" id="imageurl" value="https://dl.dropboxusercontent.com/u/2336352/img.png" /><button id="go">Go</button></span><br />
+	<div id="instantiation">
+		<span>Number of Rectangles: <input type="text" id="numrectangles" value="30" size="4" /></span><br />
+		<span>Population Size: <input type="text" id="numgenes" value="6" size="4" /></span><br />
+		<span>URL of image to copy (must be 256 x 256): <input type="text" id="imageurl" value="https://dl.dropboxusercontent.com/u/2336352/img.png" /><button id="go">Go</button></span><br />
+	</div>
+	<br />
 	<span>Iteration Number:  </span><span id="iteration"></span><br />
 	<span>Best Score:  </span><span id="bestScore"></span><br />
 	<button id="save">Grab Best Snapshot</button><br />
@@ -234,8 +239,11 @@
             
 	imageMatcher = null
 	go = () ->
+		numRectangles = document.getElementById("numrectangles").value
+		numGenes = document.getElementById("numgenes").value
 		imageURL = document.getElementById("imageurl").value
-		imageMatcher = new ImageMatcher imageURL, 30, 6
+		imageMatcher = new ImageMatcher imageURL, numRectangles, numGenes
+		document.getElementById("instantiation").hidden = "true"
 		setTimeout (() -> start()), 1000
 
 	start = () -> setInterval (() -> imageMatcher.run()), 0

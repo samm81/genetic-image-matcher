@@ -1,0 +1,30 @@
+<html>
+<body onload="go(1, true, 0)">
+<div style="text-align:center; padding-top:200px; font-size:40px; line-height:80px;">
+<div id="timer"></div>
+<div id="exercise"></div>
+</div>
+</body>
+<script type="text\cofeescript">
+exercises = ["Preparing", "Running in Place", "Resting (Jumping Jacks Next)", "Jumping Jacks", "Resting (Jumping Squats Next)", "Jumping Squats", "Resting (Push Ups Next)", "Push Ups", "Resting (Bicycle Crunch Next)", "Bicycle Crunch", "Resting (Burpees Next)", "Burpees", "Resting (Mason Twist Next)", "Mason Twist", "Resting (Mountain Climbers Next)", "Mountain Climbers", "All Done!"]
+
+timer = document.getElementById("timer");
+exercise = document.getElementById("exercise");
+
+go:(time, resting, exerciseIndex) ->
+    exercise.innerText = exercises[exerciseIndex]
+
+    timer.innerText = time
+    if(!resting)
+	if time < 20
+	    setTimeout (() -> go time + 1, resting, exerciseIndex), 1000
+	else
+	    setTimeout (() -> go 1, !resting, exerciseIndex + 1), 1000
+    else
+	if time < 10
+	    setTimeout (() -> go time + 1, resting, exerciseIndex), 1000
+	else
+	    setTimeout (() -> go 1, !resting, exerciseindex + 1), 1000
+</script>
+<script src="coffee-script.js"></script>
+</html>
