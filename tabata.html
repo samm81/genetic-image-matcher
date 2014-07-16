@@ -3,6 +3,8 @@
 <div style="text-align:center; padding-top:200px; font-size:40px; line-height:80px;">
 <div id="timer"></div>
 <div id="exercise"></div>
+<br />
+<img id="img" />
 </div>
 </body>
 
@@ -11,12 +13,16 @@ exercises = ["Preparing", "Running in Place", "Resting (Jumping Jacks Next)", "J
 
 timer = document.getElementById("timer")
 exercise = document.getElementById("exercise")
+img = document.getElementById("img")
 
 go = (time, resting, exerciseIndex) ->
   exercise.innerText = exercises[exerciseIndex]
+  if exercises[exerciseIndex + 1] is undefined
+    timer.innerText = ""
+    return
 
   timer.innerText = time
-  if(!resting)
+  if not resting
     if time < 20
       setTimeout (() -> go time + 1, resting, exerciseIndex), 1000
     else
