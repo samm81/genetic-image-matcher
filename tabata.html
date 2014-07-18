@@ -9,12 +9,45 @@
 </body>
 
 <script type="text/coffeescript">
-exercises = ["Preparing", "Running in Place", "Resting (Jumping Jacks Next)", "Jumping Jacks", "Resting (Jumping Squats Next)", "Jumping Squats", "Resting (Push Ups Next)", "Push Ups", "Resting (Bicycle Crunch Next)", "Bicycle Crunch", "Resting (Burpees Next)", "Burpees", "Resting (Mason Twist Next)", "Mason Twist", "Resting (Mountain Climbers Next)", "Mountain Climbers", "All Done!"]
+exercises = ["Running in Place", "Jumping Jacks", "Jumping Squats", "Push Ups", "Bicycle Crunch", "Burpees", "Mason Twist", "Mountain Climbers"]
 
 timer = document.getElementById("timer")
 exercise = document.getElementById("exercise")
 img = document.getElementById("img")
 
+countdowner = (time, nextFunction) ->
+  setTimerText time
+  if time is 0
+    nextFunction()
+  else
+    setTimeout (() -> countdowner time - 1, nextFunction), 1000
+
+start = () ->
+  setExerciseText "Get Ready!"
+  countdowner 3, (() -> showExercise 0)
+
+showExercise = (index) ->
+  setExerciseText exercises[index]
+  countdowner 20, (() -> showResting index)
+
+showResting = (index) ->
+  if isLastIndex index
+    end()
+  else
+    setExerciseText "Resting (#{ exercises[index + 1]} Next)"
+    countdowner 10, (() -> showExercise index + 1)
+
+end = () ->
+  setTimerText ""
+  setExerciseText "All Done!"
+
+setTimerText = (text) -> timer.innerText = text
+setExerciseText = (text) -> exercise.innerText = text
+isLastIndex = (index) -> exercises[index + 1] is undefined
+
+start()
+
+###
 go = (time, resting, exerciseIndex) ->
   exercise.innerText = exercises[exerciseIndex]
   if exercises[exerciseIndex + 1] is undefined
@@ -34,6 +67,7 @@ go = (time, resting, exerciseIndex) ->
       setTimeout (() -> go 1, !resting, exerciseIndex + 1), 1000
     
 go 1, true, 0
+###
 </script>
 <script src="coffee-script.js"></script>
 </html>
