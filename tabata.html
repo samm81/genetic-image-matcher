@@ -1,5 +1,5 @@
 <html>
-<body>
+<body onload="start()">
 <div style="text-align:center; padding-top:200px; font-size:40px; line-height:80px;">
 <div id="timer"></div>
 <div id="exercise"></div>
@@ -7,67 +7,5 @@
 <img id="img" />
 </div>
 </body>
-
-<script type="text/coffeescript">
-exercises = ["Running in Place", "Jumping Jacks", "Jumping Squats", "Push Ups", "Bicycle Crunch", "Burpees", "Mason Twist", "Mountain Climbers"]
-
-timer = document.getElementById("timer")
-exercise = document.getElementById("exercise")
-img = document.getElementById("img")
-
-countdowner = (time, nextFunction) ->
-  setTimerText time
-  if time is 0
-    nextFunction()
-  else
-    setTimeout (() -> countdowner time - 1, nextFunction), 1000
-
-start = () ->
-  setExerciseText "Get Ready!"
-  countdowner 3, (() -> showExercise 0)
-
-showExercise = (index) ->
-  setExerciseText exercises[index]
-  countdowner 20, (() -> showResting index)
-
-showResting = (index) ->
-  if isLastIndex index
-    end()
-  else
-    setExerciseText "Resting (#{ exercises[index + 1]} Next)"
-    countdowner 10, (() -> showExercise index + 1)
-
-end = () ->
-  setTimerText ""
-  setExerciseText "All Done!"
-
-setTimerText = (text) -> timer.innerText = text
-setExerciseText = (text) -> exercise.innerText = text
-isLastIndex = (index) -> exercises[index + 1] is undefined
-
-start()
-
-###
-go = (time, resting, exerciseIndex) ->
-  exercise.innerText = exercises[exerciseIndex]
-  if exercises[exerciseIndex + 1] is undefined
-    timer.innerText = ""
-    return
-
-  timer.innerText = time
-  if not resting
-    if time < 20
-      setTimeout (() -> go time + 1, resting, exerciseIndex), 1000
-    else
-      setTimeout (() -> go 1, !resting, exerciseIndex + 1), 1000
-  else
-    if time < 10
-      setTimeout (() -> go time + 1, resting, exerciseIndex), 1000
-    else
-      setTimeout (() -> go 1, !resting, exerciseIndex + 1), 1000
-    
-go 1, true, 0
-###
-</script>
-<script src="coffee-script.js"></script>
+<script src="tabata.js"></script>
 </html>
