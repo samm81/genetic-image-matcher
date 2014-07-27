@@ -4,9 +4,12 @@ timer = document.getElementById("timer")
 exercise = document.getElementById("exercise")
 img = document.getElementById("img")
 
+clong = new Audio("clong.mp3")
+
 countdowner = (time, nextFunction) ->
   setTimerText time
   if time is 0
+    clong.play()
     nextFunction()
   else
     setTimeout (() -> countdowner time - 1, nextFunction), 1000
