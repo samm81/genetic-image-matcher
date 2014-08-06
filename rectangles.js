@@ -5,11 +5,13 @@
   ImageMatcher = (function() {
     ImageMatcher.size = 256;
 
-    function ImageMatcher(imageurl, numRectangles, numGenes) {
+    function ImageMatcher(imageurl, numRectangles, numGenes, numBreed, numMut) {
       var body, breeder, canvas, g, i, img, rectangleCollection, target, _i;
       body = document.getElementById("canvases");
       this.bestScoreField = document.getElementById("bestScore");
       this.iterationField = document.getElementById("iteration");
+      this.numBreed = numBreed;
+      this.numMut = numMut;
       target = document.getElementById("target").getContext("2d");
       img = new Image();
       img.crossOrigin = "anonymous";
@@ -41,14 +43,21 @@
     }
 
     ImageMatcher.prototype.run = function() {
+      var i, _i, _j, _k, _ref, _ref1, _ref2;
       this.updateDisplays();
       this.recomputeScores();
       this.bestScoreField.innerHTML = this.findBestScore();
       this.iterationField.innerHTML = this.iteration;
-      this.killWorst();
-      this.killWorst();
-      this.breedRandomTwo();
-      this.mutateOne();
+      for (i = _i = 0, _ref = this.numBreed; _i < _ref; i = _i += 1) {
+        this.killWorst();
+        this.killWorst();
+      }
+      for (i = _j = 0, _ref1 = this.numBreed; _j < _ref1; i = _j += 1) {
+        this.breed();
+      }
+      for (i = _k = 0, _ref2 = this.numMut; _k < _ref2; i = _k += 1) {
+        this.mutate();
+      }
       return this.iteration++;
     };
 
@@ -90,7 +99,7 @@
       return this.rectangleCollections.splice(worstIndex, 1);
     };
 
-    ImageMatcher.prototype.breedRandomTwo = function() {
+    ImageMatcher.prototype.breed = function() {
       var child1, child2, index1, index2, parent1, parent2;
       index1 = index2 = Math.floor(Math.random() * this.scoredImages.length);
       while (index2 === index1) {
@@ -106,7 +115,7 @@
       return this.scoredImages.push([0, child2]);
     };
 
-    ImageMatcher.prototype.mutateOne = function() {
+    ImageMatcher.prototype.mutate = function() {
       var index, mutated, mutatee;
       index = Math.floor(Math.random() * this.scoredImages.length);
       mutatee = this.rectangleCollections[index];
@@ -157,22 +166,22 @@
     function Rectangle(binary) {
       var a, start;
       start = 0;
-      this.b = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.b = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      this.g = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.g = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      this.r = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.r = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      a = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      a = Binary.toInt(binary.slice(start, start + varBitCount));
       this.a = a / 255;
       start += varBitCount;
-      this.x = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.x = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      this.y = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.y = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      this.xbar = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.xbar = Binary.toInt(binary.slice(start, start + varBitCount));
       start += varBitCount;
-      this.ybar = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      this.ybar = Binary.toInt(binary.slice(start, start + varBitCount));
     }
 
     Rectangle.prototype.drawSelf = function(g) {
@@ -205,7 +214,7 @@
       this.rectangles = [];
       start = 0;
       while (start !== binary.length) {
-        this.rectangles.push(new Rectangle(binary.slice(start, +(start + Rectangle.bitCount - 1) + 1 || 9e9)));
+        this.rectangles.push(new Rectangle(binary.slice(start, start + Rectangle.bitCount)));
         start += Rectangle.bitCount;
       }
     }
@@ -356,11 +365,13 @@
   imageMatcher = null;
 
   go = function() {
-    var imageURL, numGenes, numRectangles;
+    var imageURL, numBreed, numGenes, numMut, numRectangles;
     numRectangles = document.getElementById("numrectangles").value;
     numGenes = document.getElementById("numgenes").value;
     imageURL = document.getElementById("imageurl").value;
-    imageMatcher = new ImageMatcher(imageURL, numRectangles, numGenes);
+    numBreed = document.getElementById("numbreed").value;
+    numMut = document.getElementById("nummut").value;
+    imageMatcher = new ImageMatcher(imageURL, numRectangles, numGenes, numBreed, numMut);
     document.getElementById("instantiation").hidden = "true";
     return setTimeout((function() {
       return start();

@@ -1,10 +1,12 @@
 class ImageMatcher
     @size = 256
 
-    constructor: (imageurl, numRectangles, numGenes) ->
+    constructor: (imageurl, numRectangles, numGenes, numBreed, numMut) ->
         body = document.getElementById("canvases")
         @bestScoreField = document.getElementById("bestScore")
         @iterationField = document.getElementById("iteration")
+        @numBreed = numBreed
+        @numMut = numMut
         target = document.getElementById("target").getContext("2d")
         img = new Image()
         img.crossOrigin = "anonymous"
@@ -40,12 +42,14 @@ class ImageMatcher
         @bestScoreField.innerHTML = @findBestScore()
         @iterationField.innerHTML = @iteration
 
-        @killWorst()
-        @killWorst()
+        for i in [0...@numBreed] by 1
+            @killWorst()
+            @killWorst()
+            @breed()
 
-        @breedRandomTwo()
+        for i in [0...@numMut] by 1
+            @mutate()
 
-        @mutateOne()
 
         @iteration++
 
@@ -69,7 +73,7 @@ class ImageMatcher
         @looseGraphics.push @rectangleCollections[worstIndex].getGraphics()
         @rectangleCollections.splice worstIndex, 1
 
-    breedRandomTwo: () ->
+    breed: () ->
         index1 = index2 = Math.floor(Math.random() * @scoredImages.length)
         index2 = Math.floor(Math.random() * @scoredImages.length) until index2 isnt index1
 
@@ -83,7 +87,7 @@ class ImageMatcher
         @scoredImages.push [0, child1]
         @scoredImages.push [0, child2]
 
-    mutateOne: () ->
+    mutate: () ->
         index = Math.floor(Math.random() * @scoredImages.length)
         mutatee = @rectangleCollections[index]
         mutated = new RectangleCollection (Breeder.mutate mutatee.getBinary()), mutatee.getGraphics()
@@ -113,23 +117,23 @@ class Rectangle
 
     constructor: (binary) ->
         start = 0
-        @b = Binary.toInt binary[start..start+varBitCount-1]
+        @b = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        @g = Binary.toInt binary[start..start+varBitCount-1]
+        @g = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        @r = Binary.toInt binary[start..start+varBitCount-1]
+        @r = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        a = Binary.toInt binary[start..start+varBitCount-1]
+        a = Binary.toInt binary[start...start+varBitCount]
         @a = a / 255
         start += varBitCount
 
-        @x = Binary.toInt binary[start..start+varBitCount-1]
+        @x = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        @y = Binary.toInt binary[start..start+varBitCount-1]
+        @y = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        @xbar = Binary.toInt binary[start..start+varBitCount-1]
+        @xbar = Binary.toInt binary[start...start+varBitCount]
         start += varBitCount
-        @ybar = Binary.toInt binary[start..start+varBitCount-1]
+        @ybar = Binary.toInt binary[start...start+varBitCount]
 
     drawSelf: (g) ->
         g.fillStyle = "rgba(#{@r}, #{@g}, #{@b}, #{@a})"
@@ -150,8 +154,8 @@ class RectangleCollection
 
         start = 0
         until start is binary.length
-                @rectangles.push new Rectangle binary[start..start+Rectangle.bitCount-1]
-                start += Rectangle.bitCount
+            @rectangles.push new Rectangle binary[start...start+Rectangle.bitCount]
+            start += Rectangle.bitCount
 
     getGraphics: () -> @g
 
@@ -181,13 +185,11 @@ class Breeder
     constructor: () ->
 
     @breed: (parent1, parent2) ->
-        bitLength = parent1.length
-        splitPoint = Math.floor(Math.random() * bitLength)
+        splitPoint = Math.floor(Math.random() * parent.length)
         parent1[...splitPoint].concat parent2[splitPoint..]
 
     @mutate: (gene) ->
-        bitLength = gene.length
-        flipPoint = Math.floor(Math.random() * bitLength)
+        flipPoint = Math.floor(Math.random() * gene.length)
         bit = gene[flipPoint]
         gene[flipPoint] = if bit is 1 then 0 else 1
         gene
@@ -215,7 +217,9 @@ go = () ->
     numRectangles = document.getElementById("numrectangles").value
     numGenes = document.getElementById("numgenes").value
     imageURL = document.getElementById("imageurl").value
-    imageMatcher = new ImageMatcher imageURL, numRectangles, numGenes
+    numBreed = document.getElementById("numbreed").value
+    numMut = document.getElementById("nummut").value
+    imageMatcher = new ImageMatcher imageURL, numRectangles, numGenes, numBreed, numMut
     document.getElementById("instantiation").hidden = "true"
     setTimeout (() -> start()), 1000
 
