@@ -23,7 +23,7 @@
       this.canvases = [];
       this.scoredImages = [];
       this.rectangleCollections = [];
-      for (i = _i = 1; 1 <= numGenes ? _i <= numGenes : _i >= numGenes; i = 1 <= numGenes ? ++_i : --_i) {
+      for (i = _i = 1; _i <= numGenes; i = _i += 1) {
         canvas = document.createElement("canvas");
         canvas.setAttribute("width", 255);
         canvas.setAttribute("height", 255);
@@ -261,7 +261,7 @@
       var i, imageColors, score, _i, _ref;
       imageColors = (graphics.getImageData(0, 0, ImageMatcher.size, ImageMatcher.size)).data;
       score = 0;
-      for (i = _i = 0, _ref = imageColors.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (i = _i = 0, _ref = imageColors.length; _i < _ref; i = _i += 1) {
         if (i % 4 !== 3) {
           score += Math.abs(imageColors[i] - this.standardColors[i]);
         }
@@ -304,7 +304,7 @@
       return b.concat((function() {
         var _i, _results;
         _results = [];
-        for (i = _i = 1; 1 <= num ? _i <= num : _i >= num; i = 1 <= num ? ++_i : --_i) {
+        for (i = _i = 1; _i <= num; i = _i += 1) {
           _results.push(0);
         }
         return _results;
@@ -321,7 +321,7 @@
         b2 = ((function() {
           var _i, _ref, _ref1, _results;
           _results = [];
-          for (i = _i = _ref = b2.length, _ref1 = b1.length; _ref <= _ref1 ? _i < _ref1 : _i > _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+          for (i = _i = _ref = b2.length, _ref1 = b1.length; _i < _ref1; i = _i += 1) {
             _results.push(0);
           }
           return _results;
@@ -330,7 +330,7 @@
         b1 = ((function() {
           var _i, _ref, _ref1, _results;
           _results = [];
-          for (i = _i = _ref = b1.length, _ref1 = b2.length; _ref <= _ref1 ? _i < _ref1 : _i > _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+          for (i = _i = _ref = b1.length, _ref1 = b2.length; _i < _ref1; i = _i += 1) {
             _results.push(0);
           }
           return _results;
@@ -343,7 +343,7 @@
       var i, _i, _ref, _ref1, _results;
       _ref = this.normalize(b1, b2), b1 = _ref[0], b2 = _ref[1];
       _results = [];
-      for (i = _i = 0, _ref1 = b1.length; 0 <= _ref1 ? _i < _ref1 : _i > _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+      for (i = _i = 0, _ref1 = b1.length; _i < _ref1; i = _i += 1) {
         _results.push(b1[i] && b2[i]);
       }
       return _results;
@@ -353,7 +353,7 @@
       var i, _i, _ref, _ref1, _results;
       _ref = this.normalize(b1, b2), b1 = _ref[0], b2 = _ref[1];
       _results = [];
-      for (i = _i = 0, _ref1 = b1.length; 0 <= _ref1 ? _i < _ref1 : _i > _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+      for (i = _i = 0, _ref1 = b1.length; _i < _ref1; i = _i += 1) {
         _results.push(b1[i] || b2[i]);
       }
       return _results;
@@ -366,7 +366,7 @@
     Binary.random = function(numbits) {
       var i, _i, _results;
       _results = [];
-      for (i = _i = 1; 1 <= numbits ? _i <= numbits : _i >= numbits; i = 1 <= numbits ? ++_i : --_i) {
+      for (i = _i = 1; _i <= numbits; i = _i += 1) {
         _results.push(Math.random() < .5 ? 1 : 0);
       }
       return _results;
