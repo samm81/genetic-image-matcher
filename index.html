@@ -1,11 +1,18 @@
+<!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Image Matcher </title>
+    </head>
 <body style="text-align:center;" id="body">
 	<div id="canvases">
-		<canvas width="255", height="255", id="target"></canvas>
+		<canvas width="255" height="255" id="target"></canvas>
 	</div>
 	<div id="instantiation">
-		<span>Number of Rectangles: <input type="text" id="numrectangles" value="30" size="4" /></span><br />
-		<span>Population Size: <input type="text" id="numgenes" value="6" size="4" /></span><br />
+		<span>Number of Rectangles: <input type="number" id="numrectangles" value="30"/></span><br />
+		<span>Population Size: <input type="number" id="numgenes" value="6"/></span><br />
+		<span> Mutations / Generation <input type="number" id="nummut" value="1"/></span><br />
+		<span> Breeding  / Generation <input type="number" id="numbreed" value="1"/></span><br />
 		<span>URL of image to copy (must be 256 x 256): <input type="text" id="imageurl" value="https://dl.dropboxusercontent.com/u/2336352/img.png" /><button id="go">Go</button></span><br />
 	</div>
 	<br />
@@ -13,6 +20,6 @@
 	<span>Best Score:  </span><span id="bestScore"></span><br />
 	<button id="save">Grab Best Snapshot</button><br />
 	<img id="snapshot" />
+        <script src="rectangles.js"></script>
 </body>
-<script src="rectangles.js"></script>
 </html>
