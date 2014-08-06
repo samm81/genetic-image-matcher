@@ -16,7 +16,7 @@ class ImageMatcher
     @canvases = []
     @scoredImages = []
     @rectangleCollections = []
-    for i in [1..numGenes]
+    for i in [1..numGenes] by 1
       canvas = document.createElement "canvas"
       canvas.setAttribute "width", 255
       canvas.setAttribute "height", 255
@@ -31,14 +31,14 @@ class ImageMatcher
 
     breeder = new Breeder
     @looseGraphics = []
-    @iteration = 0;
+    @iteration = 0
 
   run: () ->
     @updateDisplays()
     @recomputeScores()
 
     @bestScoreField.innerText = @findBestScore()
-    @iterationField.innerText = @iteration  
+    @iterationField.innerText = @iteration
 
     @killWorst()
     @killWorst()
@@ -46,12 +46,6 @@ class ImageMatcher
     @breedRandomTwo()
 
     @mutateOne()
-
-    #console.log "#{@iteration}:  #{bestScore}"
-    #console.log @iteration
-    #console.log @scoredImages
-    #console.log ""
-
     @iteration++
 
   updateDisplays: () ->
@@ -115,23 +109,25 @@ class Rectangle
   @bitCount = 8 * varBitCount
 
   constructor: (binary) ->
-    @b = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @g = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @r = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    a = Binary.toInt binary[-varBitCount..]
-    @a = a / 255
-    binary = Binary.shiftRight binary, varBitCount
+    start = 0
+    @ybar = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    @xbar = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    @y = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    @x = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
 
-    @ybar = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @xbar = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @y = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @x = Binary.toInt binary[-varBitCount..]
+    @r = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    @g = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    @b = Binary.toInt binary[start..start+varBitCount]
+    start += varBitCount
+    a = Binary.toInt binary[start..start+varBitCount]
+    @a = a / 255
+    start += varBitCount
 
   drawSelf: (g) ->
     g.fillStyle = "rgba(#{@r}, #{@g}, #{@b}, #{@a})"
@@ -145,20 +141,19 @@ class Rectangle
 
 class RectangleCollection
   size = 256
-  magnitude = 0
 
   constructor: (@binary, @g) ->
     binary = @binary
     @rectangles = []
 
-    until binary.length is 0
-      rectangleBinary = binary[-Rectangle.bitCount..]
+    start = 0
+    b = Rectangle.bitCount
+
+    until start is binary.length
+      rectangleBinary = binary[start..start+Rectangle.bitCount]
+      start += Rectangle.bitCount
       @rectangles.push new Rectangle rectangleBinary
-      binary = Binary.shiftRight binary, Rectangle.bitCount
-      magnitude++
-
-    @rectangles.reverse()
-
+    
   getGraphics: () -> @g
 
   getBinary: () -> @binary
@@ -168,9 +163,8 @@ class RectangleCollection
     rectangle.drawSelf @g for rectangle in @rectangles
 
   printSelf: () ->
-    console.log "magnitude: #{magnitude}"
     for rectangle, i in @rectangles
-      console.log "rectangle #{i}" 
+      console.log "rectangle #{i}"
       rectangle.printSelf()
 
 class Scorer
@@ -180,7 +174,7 @@ class Scorer
   score: (graphics) ->
     imageColors = (graphics.getImageData 0, 0, ImageMatcher.size, ImageMatcher.size).data
     score = 0
-    score += Math.abs(imageColors[i] - @standardColors[i]) for i in [0...imageColors.length] when i % 4 isnt 3
+    score += Math.abs(imageColors[i] - @standardColors[i]) for i in [0...imageColors.length] by 1 when i % 4 isnt 3
     score
 
 class Breeder
@@ -199,26 +193,22 @@ class Breeder
     gene
 
 class Binary
-  @shiftLeft: (b, num) ->
-    b.concat (0 for i in [1..num])
-  @shiftRight: (b, num) ->
-    b[0...-num]
   @normalize: (b1, b2) ->
     if b1.length > b2.length
-      b2 = (0 for i in [b2.length...b1.length]).concat b2
+      b2 = (0 for i in [b2.length...b1.length] by 1).concat b2
     else if b2.length > b1.length
-      b1 = (0 for i in [b1.length...b2.length]).concat b1
+      b1 = (0 for i in [b1.length...b2.length] by 1).concat b1
     [b1, b2]
   @and: (b1, b2) ->
     [b1, b2] = @normalize b1, b2
-    (b1[i] and b2[i] for i in [0...b1.length])
+    (b1[i] and b2[i] for i in [0...b1.length] by 1)
   @or: (b1, b2) ->
     [b1, b2] = @normalize b1, b2
-    (b1[i] or b2[i] for i in [0...b1.length])
+    (b1[i] or b2[i] for i in [0...b1.length] by 1)
   @toInt: (b) ->
     parseInt(b.join(""), 2)
   @random: (numbits) ->
-    ((if Math.random() < .5 then 1 else 0) for i in [1..numbits])
+    ((if Math.random() < .5 then 1 else 0) for i in [1..numbits] by 1)
 
 imageMatcher = null
 go = () ->
@@ -227,7 +217,7 @@ go = () ->
   imageURL = document.getElementById("imageurl").value
   imageMatcher = new ImageMatcher imageURL, numRectangles, numGenes
   document.getElementById("instantiation").hidden = "true"
-  setTimeout (() -> start()), 1000
+  setTimeout start, 1000
 
 start = () -> setInterval (() -> imageMatcher.run()), 0
 
@@ -236,5 +226,5 @@ saveImage = () ->
   dataURL = document.getElementById("canvas#{index}").toDataURL()
   document.getElementById("snapshot").src = dataURL
 
-document.getElementById("save").onclick = (() -> saveImage())
-document.getElementById("go").onclick = (() -> go())
+document.getElementById("save").onclick = saveImage
+document.getElementById("go").onclick = go
