@@ -53,26 +53,24 @@
     };
 
     ImageMatcher.prototype.updateDisplays = function() {
-      var scoreImagePair, _i, _len, _ref, _results;
+      var scoreImagePair, _i, _len, _ref;
       _ref = this.scoredImages;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         scoreImagePair = _ref[_i];
-        _results.push(scoreImagePair[1].drawSelf());
+        scoreImagePair[1].drawSelf();
       }
-      return _results;
+      return null;
     };
 
     ImageMatcher.prototype.recomputeScores = function() {
-      var rectangleCollection, _i, _len, _ref, _results;
+      var rectangleCollection, _i, _len, _ref;
       this.scoredImages = [];
       _ref = this.rectangleCollections;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rectangleCollection = _ref[_i];
-        _results.push(this.scoredImages.push([this.scorer.score(rectangleCollection.getGraphics()), rectangleCollection]));
+        this.scoredImages.push([this.scorer.score(rectangleCollection.getGraphics()), rectangleCollection]);
       }
-      return _results;
+      return null;
     };
 
     ImageMatcher.prototype.killWorst = function() {
@@ -157,23 +155,24 @@
     Rectangle.bitCount = 8 * varBitCount;
 
     function Rectangle(binary) {
-      var a;
-      this.b = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.g = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.r = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      a = Binary.toInt(binary.slice(-varBitCount));
+      var a, start;
+      start = 0;
+      this.b = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      this.g = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      this.r = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      a = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
       this.a = a / 255;
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.ybar = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.xbar = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.y = Binary.toInt(binary.slice(-varBitCount));
-      binary = Binary.shiftRight(binary, varBitCount);
-      this.x = Binary.toInt(binary.slice(-varBitCount));
+      start += varBitCount;
+      this.x = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      this.y = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      this.xbar = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
+      start += varBitCount;
+      this.ybar = Binary.toInt(binary.slice(start, +(start + varBitCount - 1) + 1 || 9e9));
     }
 
     Rectangle.prototype.drawSelf = function(g) {
@@ -194,25 +193,21 @@
   })();
 
   RectangleCollection = (function() {
-    var magnitude, size;
+    var size;
 
     size = 256;
 
-    magnitude = 0;
-
     function RectangleCollection(binary, g) {
-      var rectangleBinary;
+      var start;
       this.binary = binary;
       this.g = g;
       binary = this.binary;
       this.rectangles = [];
-      while (binary.length !== 0) {
-        rectangleBinary = binary.slice(-Rectangle.bitCount);
-        this.rectangles.push(new Rectangle(rectangleBinary));
-        binary = Binary.shiftRight(binary, Rectangle.bitCount);
-        magnitude++;
+      start = 0;
+      while (start !== binary.length) {
+        this.rectangles.push(new Rectangle(binary.slice(start, +(start + Rectangle.bitCount - 1) + 1 || 9e9)));
+        start += Rectangle.bitCount;
       }
-      this.rectangles.reverse();
     }
 
     RectangleCollection.prototype.getGraphics = function() {
@@ -224,20 +219,18 @@
     };
 
     RectangleCollection.prototype.drawSelf = function() {
-      var rectangle, _i, _len, _ref, _results;
+      var rectangle, _i, _len, _ref;
       this.g.clearRect(0, 0, size, size);
       _ref = this.rectangles;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rectangle = _ref[_i];
-        _results.push(rectangle.drawSelf(this.g));
+        rectangle.drawSelf(this.g);
       }
-      return _results;
+      return null;
     };
 
     RectangleCollection.prototype.printSelf = function() {
       var i, rectangle, _i, _len, _ref, _results;
-      console.log("magnitude: " + magnitude);
       _ref = this.rectangles;
       _results = [];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -298,22 +291,6 @@
 
   Binary = (function() {
     function Binary() {}
-
-    Binary.shiftLeft = function(b, num) {
-      var i;
-      return b.concat((function() {
-        var _i, _results;
-        _results = [];
-        for (i = _i = 1; _i <= num; i = _i += 1) {
-          _results.push(0);
-        }
-        return _results;
-      })());
-    };
-
-    Binary.shiftRight = function(b, num) {
-      return b.slice(0, -num);
-    };
 
     Binary.normalize = function(b1, b2) {
       var i;

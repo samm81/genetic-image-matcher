@@ -51,10 +51,12 @@ class ImageMatcher
 
   updateDisplays: () ->
     scoreImagePair[1].drawSelf() for scoreImagePair in @scoredImages
+    null
 
   recomputeScores: () ->
     @scoredImages = []
     @scoredImages.push [(@scorer.score rectangleCollection.getGraphics()), rectangleCollection] for rectangleCollection in @rectangleCollections
+    null
 
   killWorst: () ->
     worstIndex = 0
@@ -110,23 +112,24 @@ class Rectangle
   @bitCount = 8 * varBitCount
 
   constructor: (binary) ->
-    @b = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @g = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @r = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    a = Binary.toInt binary[-varBitCount..]
+    start = 0
+    @b = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    @g = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    @r = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    a = Binary.toInt binary[start..start+varBitCount-1]
     @a = a / 255
-    binary = Binary.shiftRight binary, varBitCount
+    start += varBitCount
 
-    @ybar = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @xbar = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @y = Binary.toInt binary[-varBitCount..]
-    binary = Binary.shiftRight binary, varBitCount
-    @x = Binary.toInt binary[-varBitCount..]
+    @x = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    @y = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    @xbar = Binary.toInt binary[start..start+varBitCount-1]
+    start += varBitCount
+    @ybar = Binary.toInt binary[start..start+varBitCount-1]
 
   drawSelf: (g) ->
     g.fillStyle = "rgba(#{@r}, #{@g}, #{@b}, #{@a})"
@@ -140,19 +143,15 @@ class Rectangle
 
 class RectangleCollection
   size = 256
-  magnitude = 0
 
   constructor: (@binary, @g) ->
     binary = @binary
     @rectangles = []
 
-    until binary.length is 0
-      rectangleBinary = binary[-Rectangle.bitCount..]
-      @rectangles.push new Rectangle rectangleBinary
-      binary = Binary.shiftRight binary, Rectangle.bitCount
-      magnitude++
-
-    @rectangles.reverse()
+    start = 0
+    until start is binary.length
+        @rectangles.push new Rectangle binary[start..start+Rectangle.bitCount-1]
+        start += Rectangle.bitCount
 
   getGraphics: () -> @g
 
@@ -161,9 +160,9 @@ class RectangleCollection
   drawSelf: () ->
     @g.clearRect 0, 0, size, size
     rectangle.drawSelf @g for rectangle in @rectangles
+    null
 
   printSelf: () ->
-    console.log "magnitude: #{magnitude}"
     for rectangle, i in @rectangles
       console.log "rectangle #{i}"
       rectangle.printSelf()
@@ -194,10 +193,6 @@ class Breeder
     gene
 
 class Binary
-  @shiftLeft: (b, num) ->
-    b.concat (0 for i in [1..num] by 1)
-  @shiftRight: (b, num) ->
-    b[0...-num]
   @normalize: (b1, b2) ->
     if b1.length > b2.length
       b2 = (0 for i in [b2.length...b1.length] by 1).concat b2
