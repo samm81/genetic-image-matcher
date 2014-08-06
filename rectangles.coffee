@@ -31,14 +31,14 @@ class ImageMatcher
 
     breeder = new Breeder
     @looseGraphics = []
-    @iteration = 0;
+    @iteration = 0
 
   run: () ->
     @updateDisplays()
     @recomputeScores()
 
-    @bestScoreField.innerText = @findBestScore()
-    @iterationField.innerText = @iteration  
+    @bestScoreField.innerHTML = @findBestScore()
+    @iterationField.innerHTML = @iteration
 
     @killWorst()
     @killWorst()
@@ -46,11 +46,6 @@ class ImageMatcher
     @breedRandomTwo()
 
     @mutateOne()
-
-    #console.log "#{@iteration}:  #{bestScore}"
-    #console.log @iteration
-    #console.log @scoredImages
-    #console.log ""
 
     @iteration++
 
@@ -170,7 +165,7 @@ class RectangleCollection
   printSelf: () ->
     console.log "magnitude: #{magnitude}"
     for rectangle, i in @rectangles
-      console.log "rectangle #{i}" 
+      console.log "rectangle #{i}"
       rectangle.printSelf()
 
 class Scorer
@@ -236,5 +231,5 @@ saveImage = () ->
   dataURL = document.getElementById("canvas#{index}").toDataURL()
   document.getElementById("snapshot").src = dataURL
 
-document.getElementById("save").onclick = (() -> saveImage())
-document.getElementById("go").onclick = (() -> go())
+document.getElementById("save").onclick = saveImage
+document.getElementById("go").onclick = go
