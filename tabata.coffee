@@ -2,7 +2,7 @@ exercises = ["Running in Place", "Jumping Jacks", "Jumping Squats", "Push Ups", 
 
 timer = document.getElementById("timer")
 exercise = document.getElementById("exercise")
-img = document.getElementById("img")
+image = document.getElementById("img")
 
 clong = new Audio("clong.mp3")
 
@@ -20,9 +20,11 @@ start = () ->
 
 showExercise = (index) ->
   setExerciseText exercises[index]
+  setImage "img/" + exercises[index] + ".png"
   countdowner 20, (() -> showResting index)
 
 showResting = (index) ->
+  setImage ""
   if isLastIndex index
     end()
   else
@@ -35,4 +37,5 @@ end = () ->
 
 setTimerText = (text) -> timer.innerText = text
 setExerciseText = (text) -> exercise.innerText = text
+setImage = (img) -> image.src = img
 isLastIndex = (index) -> exercises[index + 1] is undefined
